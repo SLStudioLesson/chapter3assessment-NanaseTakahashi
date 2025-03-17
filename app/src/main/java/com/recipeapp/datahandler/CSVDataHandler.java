@@ -48,13 +48,23 @@ public class CSVDataHandler implements DataHandler { // インターフェース
         /* 設問5 レシピ一覧表示機能 */
         // recipes.csvからレシピデータを読み込み、リスト形式で返す
         ArrayList<Recipe> recipeDatas = new ArrayList<>();
+        
         try {
             BufferedReader reader = new BufferedReader(new FileReader(this.filePath));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-                /* この処理で詰まってる　どうやってArrayListに要素を追加すればよいか？ */
-                //recipeDatas.add(line); // ArrrayListに要素を追加
+                ArrayList<Ingredient> ingredients = new ArrayList<>();
+                //System.out.println(line);
+                String[] datas = line.split(",", 2);
+                String name = datas[0]; // レシピ名
+                String[] arrays = datas[1].split(", ");
+                for (String i : arrays) {
+                    Ingredient temp = new Ingredient(i);
+                    ingredients.add(temp);
+                }
+
+                Recipe recipe = new Recipe(name, ingredients);
+                recipeDatas.add(recipe);
             }
             reader.close();
         } catch (IOException e) {
@@ -71,18 +81,23 @@ public class CSVDataHandler implements DataHandler { // インターフェース
         // 新しいレシピをrecipes.csvに追加
         String filename = this.filePath; // ファイル名
         
-        String recipeName = recipe.getName(); // レシピ名
+        String recipeName = recipe.getName(); // (1)レシピ名
+
+        // Ingredient型のリスト形式から、String型に修正する
         ArrayList<Ingredient> lists = recipe.getIngredients();
-        ArrayList<String> text = new ArrayList<>();
+        ArrayList<String> text = new ArrayList<>(); // 修正後の値を格納
         for (Ingredient i : lists) {
-            System.out.println(i.getName());
             if (!i.getName().equals("done")) {
+                // 入力終了を表す'done'を省く
                 text.add(i.getName());
             }
         }
+        // (2)材料
+        String ingredients = String.join(", ", text);
 
-        /* // 引数で受け取ったレシピ名・材料を文字列結合
+        // レシピ名・材料名をカンマ(,)で文字列結合：(1)+(2)
         String contentToWrite = recipeName + "," + ingredients;
+
         // 既存のレシピに追加で書き込む
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             // 書き込み実行
@@ -92,7 +107,7 @@ public class CSVDataHandler implements DataHandler { // インターフェース
             System.out.println("Recipe added successfully.");
         } catch (IOException e) {
             e.printStackTrace();
-        } */
+        }
 
     }
 

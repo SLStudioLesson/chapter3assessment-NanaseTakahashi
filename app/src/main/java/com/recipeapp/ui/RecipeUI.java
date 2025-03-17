@@ -65,14 +65,31 @@ public class RecipeUI {
     // displayRecipesメソッドを作成
     public void displayRecipes() {
         try {
-            System.out.println("Recipes:");
-            System.out.println("-----------------------------------");
-
             CSVDataHandler display = new CSVDataHandler(); // インスタンス生成
             ArrayList<Recipe> recipeData = new ArrayList<>();
-            display.readData();
+            recipeData = display.readData();
+            
+            // レシピデータが存在する場合
+            if (recipeData.size() != 0) {
+                System.out.println("Recipes:");
+                System.out.println("-----------------------------------");
+                for (Recipe recipe : recipeData) {
+                    // レシピ名を出力
+                    System.out.println("Recipe Name: " + recipe.getName());
 
-            System.out.println("-----------------------------------");
+                    // 材料名を出力
+                    ArrayList<Ingredient> ingredients = recipe.getIngredients();
+                    System.out.print("Main Ingredients: ");
+                    for (Ingredient ingredient : ingredients) {
+                        System.out.print(ingredient.getName() + ", ");
+                    }
+                    System.out.println();
+                System.out.println("-----------------------------------");
+                }
+            // レシピデータが存在しない場合
+            } else {
+                System.out.println("No recipes available.");
+            }
         } catch (IOException ex) {
         // 例外：IOExceptionを受け取った場合
             // Error reading file: 例外のメッセージとコンソールに表示
